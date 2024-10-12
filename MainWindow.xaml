@@ -1,0 +1,25 @@
+﻿<Window x:Class="MoveSquare.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MoveSquare"
+        mc:Ignorable="d"
+        Title="2D Platformer" Height="450" Width="800">
+    <Grid Name="MyGrid">
+		<Canvas x:Name="GameCanvas" Background="LightGray">
+			<!-- 플레이어 객체 -->
+			<Border x:Name="Player" Width="30" Height="30" Background="White" BorderBrush="Black" BorderThickness="1"
+					Canvas.Left="0" Canvas.Top="170"/>
+
+			<!-- 문 객체 -->
+			<Border x:Name="Door" Width="30" Height="30" Background="Brown" BorderBrush="Black" BorderThickness="1"
+					Canvas.Left="300" Canvas.Top="170"/>
+
+			<!-- 클리어 문구 -->
+			<TextBlock x:Name="ClearText" Text="CLEAR" FontSize="40" Foreground="Green" Visibility="Hidden"
+					   Canvas.Left="350" Canvas.Top="100"/>
+		</Canvas>
+
+    </Grid>
+</Window>
