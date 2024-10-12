@@ -16,6 +16,10 @@ namespace MoveSquare;
 /// </summary>
 public partial class MainWindow : Window
 {
+    // 게임 시작 여부를 관리하는 변수
+    private bool isGameStart = false;
+
+    // 플레이어의 위치
     private double playerX = 0;
     private double playerY = 170;
     private const double doorX = 300;  // 문 위치
@@ -24,7 +28,19 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        this.KeyDown += new KeyEventHandler(OnKeyDown);  // 키보드 이벤트 핸들러 추가
+    }
+
+    // Start 버튼 클릭 이벤트 처리
+    private void StartButton_Click(object sender, RoutedEventArgs e)
+    {
+        isGameStart = true;
+
+        // Start 버튼을 숨기고, 게임 Canvas를 보여줌
+        StartButton.Visibility = Visibility.Hidden;
+        GameCanvas.Visibility = Visibility.Visible;
+
+        // 게임이 시작되면 키보드 입력을 받기 시작
+        this.KeyDown += new KeyEventHandler(OnKeyDown);
     }
 
     // 키보드 입력 처리
