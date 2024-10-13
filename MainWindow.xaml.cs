@@ -8,74 +8,76 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MoveSquare.Component.StaticPlayer;
+using MoveSquare.Component.BasicMap;
 
-namespace MoveSquare;
-
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window
+namespace MoveSquare
 {
-    // 게임 시작 여부를 관리하는 변수
-    private bool isGameStart = false;
-
-    // 플레이어의 위치
-    private double playerX = 0;
-    private double playerY = 170;
-    private const double doorX = 300;  // 문 위치
-    private const double doorY = 170;
-
-    public MainWindow()
+    public partial class MainWindow : Window
     {
-        InitializeComponent();
-    }
+        private Player player;
+        private Map map;
 
-    // Start 버튼 클릭 이벤트 처리
-    private void StartButton_Click(object sender, RoutedEventArgs e)
-    {
-        isGameStart = true;
-
-        // Start 버튼을 숨기고, 게임 Canvas를 보여줌
-        StartButton.Visibility = Visibility.Hidden;
-        GameCanvas.Visibility = Visibility.Visible;
-
-        // 게임이 시작되면 키보드 입력을 받기 시작
-        this.KeyDown += new KeyEventHandler(OnKeyDown);
-    }
-
-    // 키보드 입력 처리
-    private void OnKeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Right)
+        public MainWindow()
         {
-            MovePlayer(10, 0);  // 오른쪽 이동
-        }
-        else if (e.Key == Key.Left)
-        {
-            MovePlayer(-10, 0);  // 왼쪽 이동
+            InitializeComponent();
+
+            // Start 버튼 생성
+            Button startButton = new Button
+            {
+                Content = "START",
+                Width = 100,
+                Height = 50,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            startButton.Click += StartButton_Click;
+
+            // Start 버튼을 Grid에 추가
+            AppGrid.Children.Add(startButton);
         }
 
-        // 플레이어가 문에 도달했는지 확인
-        CheckForClear();
-    }
-
-    // 플레이어 이동 함수
-    private void MovePlayer(double deltaX, double deltaY)
-    {
-        playerX += deltaX;
-        playerY += deltaY;
-
-        // 플레이어 위치를 Canvas에 적용
-        Canvas.SetLeft(Player, playerX);
-        Canvas.SetTop(Player, playerY);
-    }
-
-    // 문에 도달하면 Clear 문구 표시
-    private void CheckForClear()
-    {
-        if (playerX >= doorX && playerY == doorY)
+        // Start 버튼 클릭 시 게임 시작
+        private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            ClearText.Visibility = Visibility.Visible;
+            // Grid 초기화 (Start 버튼 삭제)
+            AppGrid.Children.Clear();
+
+            // Canvas 생성
+            Canvas gameCanvas = new Canvas
+            {
+                Background = System.Windows.Media.Brushes.LightGray,
+                Width = 800,
+                Height = 450
+            };
+            AppGrid.Children.Add(gameCanvas);
+
+            // 플레이어 객체 생성 및 추가
+            player = new Player();
+            gameCanvas.Children.Add(player.PlayerUIElement);
+
+            // 맵 객체 생성 및 추가 (블록 디자인)
+            map = new Map();
+            foreach (var block in map.Blocks)
+            {
+                gameCanvas.Children.Add(block);
+            }
+
+            // 키 이벤트 핸들러 등록
+            this.KeyDown += OnKeyDown;
+        }
+
+        // 키 입력 처리
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Right)
+            {
+                player.Move(10, 0);  // 오른쪽 이동
+            }
+            else if (e.Key == Key.Left)
+            {
+                player.Move(-10, 0);  // 왼쪽 이동
+            }
         }
     }
 }
