@@ -2,7 +2,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Controls;
-using System.Windows.Media.Animation; // 추가된 네임스페이스
+using System.Windows.Media.Animation; 
 
 namespace MoveSquare.Component.StaticPlayer
 {
@@ -11,12 +11,14 @@ namespace MoveSquare.Component.StaticPlayer
         public double X { get; private set; }
         public double Y { get; private set; }
         public Rectangle PlayerUIElement { get; private set; }
+        private double jumpHeight = 150; // Jump 최대 높이
+        private double jumpDuration = 400; // Jump 지속 시간
 
         public Player()
         {
             // 플레이어 UI 설정
             X = 0;
-            Y = 380;
+            Y = 380; // 초기 Y 위치
 
             PlayerUIElement = new Rectangle
             {
@@ -41,27 +43,55 @@ namespace MoveSquare.Component.StaticPlayer
             Canvas.SetTop(PlayerUIElement, Y);
         }
 
-        // Space 바를 눌렀을 때 이동 애니메이션 함수
+        // JUMP
         public void Jump()
         {
             // 현재 Y 위치
             double currentY = Y;
 
-            // 목표 Y 위치 (-150)
-            double targetY = currentY - 150;
+            // 목표 Y 위치
+            double targetY = currentY - jumpHeight;
 
-            // Animation을 위한 DoubleAnimation 객체 생성
-            DoubleAnimation moveUp = new DoubleAnimation
+            // 점프 상태 업데이트 (색상 변경)
+            PlayerUIElement.Fill = Brushes.Red; // 점프 시작 시 색상을 빨간색으로 변경
+
+            // 애니메이션 생성 및 적용
+            DoubleAnimation jumpAnimation = new DoubleAnimation
             {
                 From = currentY,
                 To = targetY,
-                Duration = new Duration(TimeSpan.FromMilliseconds(1500)), // 1500 밀리초
-                AutoReverse = true, // 애니메이션이 끝나면 되돌아감
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut } // 부드러운 이동
+                Duration = new Duration(TimeSpan.FromMilliseconds(jumpDuration)), // 400 밀리초
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
             };
 
-            // PlayerUIElement의 Y 위치에 애니메이션 적용
-            PlayerUIElement.BeginAnimation(Canvas.TopProperty, moveUp);
+            // 리턴 애니메이션 생성
+            DoubleAnimation returnAnimation = new DoubleAnimation
+            {
+                From = targetY,
+                To = currentY,
+                Duration = new Duration(TimeSpan.FromMilliseconds(jumpDuration)), // 400 밀리초
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
+            };
+
+            // 첫 번째 애니메이션 시작
+            PlayerUIElement.BeginAnimation(Canvas.TopProperty, jumpAnimation);
+
+            // 첫 번째 애니메이션이 완료된 후 두 번째 애니메이션 시작
+            jumpAnimation.Completed += (s, e) =>
+            {
+                // 리턴 애니메이션 시작
+                PlayerUIElement.BeginAnimation(Canvas.TopProperty, returnAnimation);
+            };
+
+            // 두 번째 애니메이션 완료 후 색상 변경
+            returnAnimation.Completed += (s, e) =>
+            {
+                // 리턴 애니메이션이 완료된 후 플레이어의 색상을 흰색으로 변경
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    PlayerUIElement.Fill = Brushes.White; // 리턴 후 색상을 흰색으로 변경
+                });
+            };
         }
     }
 }
