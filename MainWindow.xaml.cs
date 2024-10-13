@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Diagnostics;
 using MoveSquare.Component.StaticPlayer;
 using MoveSquare.Component.BasicMap;
 
@@ -37,7 +38,6 @@ namespace MoveSquare
             AppGrid.Children.Add(startButton);
         }
 
-        // Start 버튼 클릭 시 게임 시작
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             // Grid 초기화 (Start 버튼 삭제)
@@ -53,8 +53,8 @@ namespace MoveSquare
             AppGrid.Children.Add(gameCanvas);
 
             // 플레이어 객체 생성 및 추가
-            player = new Player();
-            gameCanvas.Children.Add(player.PlayerUIElement);
+            player = new Player(gameCanvas); // Canvas를 매개변수로 전달
+                                             // gameCanvas.Children.Add(player.PlayerUIElement); // 이 줄은 필요 없음, Player 클래스에서 추가됨
 
             // 맵 객체 생성 및 추가 (블록 디자인)
             map = new Map();
@@ -70,6 +70,8 @@ namespace MoveSquare
         // 키 입력 처리
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
+            if (player == null) return; // player가 null인 경우 메서드를 종료
+
             if (e.Key == Key.Right)
             {
                 player.Move(10, 0);  // 오른쪽 이동
@@ -80,6 +82,7 @@ namespace MoveSquare
             }
             else if (e.Key == Key.Space)
             {
+                Debug.WriteLine("Space key pressed!"); // Space 키 확인
                 player.Jump(); // Jump 메서드 호출
             }
         }
