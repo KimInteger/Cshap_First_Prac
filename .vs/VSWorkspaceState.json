@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Component",
+    "\\Component\\MapInformation",
+    "\\Component\\MapInformation\\UIElement",
+    "\\Component\\PlayerInformation"
+  ],
+  "SelectedNode": "\\MoveSquare.csproj",
+  "PreviewInSolutionExplorer": false
+}
