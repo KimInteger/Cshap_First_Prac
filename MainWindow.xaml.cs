@@ -15,8 +15,8 @@ namespace MoveSquare
 {
     public partial class MainWindow : Window
     {
-        private Player player;
-        private Map map;
+        private Player? player;
+        private Map? map;
 
         public MainWindow()
         {
@@ -77,6 +77,10 @@ namespace MoveSquare
             else if (e.Key == Key.Left)
             {
                 player.Move(-10, 0);  // 왼쪽 이동
+            }
+            else if (e.Key == Key.Space)
+            {
+                player.Jump(); // Jump 메서드 호출
             }
         }
     }
