@@ -2,7 +2,8 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Controls;
-using System.Windows.Media.Animation; 
+using System.Windows.Media.Animation;
+using System.Diagnostics;
 
 namespace MoveSquare.Component.StaticPlayer
 {
@@ -11,14 +12,18 @@ namespace MoveSquare.Component.StaticPlayer
         public double X { get; private set; }
         public double Y { get; private set; }
         public Rectangle PlayerUIElement { get; private set; }
-        private double jumpHeight = 150; // Jump 최대 높이
-        private double jumpDuration = 400; // Jump 지속 시간
+        private TextBlock textBlock;
+        private double jumpHeight = 150;
+        private double jumpDuration = 1000;
+        private bool isJumping = false; // 점프 중인지 상태를 확인하기 위한 변수
 
-        public Player()
+        // 애니메이션 미리 생성
+        private DoubleAnimation jumpAnimation;
+
+        public Player(Canvas parentCanvas)
         {
-            // 플레이어 UI 설정
             X = 0;
-            Y = 380; // 초기 Y 위치
+            Y = 380;
 
             PlayerUIElement = new Rectangle
             {
@@ -28,70 +33,70 @@ namespace MoveSquare.Component.StaticPlayer
                 Stroke = Brushes.Black
             };
 
+            textBlock = new TextBlock
+            {
+                Text = "1",
+                Foreground = Brushes.Black,
+                FontSize = 16,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
             Canvas.SetLeft(PlayerUIElement, X);
             Canvas.SetTop(PlayerUIElement, Y);
+            Canvas.SetLeft(textBlock, X + 7);
+            Canvas.SetTop(textBlock, Y + 5);
+
+            parentCanvas.Children.Add(PlayerUIElement);
+            parentCanvas.Children.Add(textBlock);
+
+            // 애니메이션 미리 설정
+            jumpAnimation = new DoubleAnimation
+            {
+                Duration = new Duration(TimeSpan.FromMilliseconds(jumpDuration)),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut },
+                AutoReverse = true
+            };
+
+            // 애니메이션 완료 시 핸들러
+            jumpAnimation.Completed += (s, e) =>
+            {
+                Debug.WriteLine("Jump animation completed!");
+                PlayerUIElement.Fill = Brushes.White;
+                textBlock.Text = "0";
+                isJumping = false; // 점프 완료 상태로 변경
+            };
         }
 
-        // 플레이어 이동 함수
         public void Move(double deltaX, double deltaY)
         {
             X += deltaX;
             Y += deltaY;
 
-            // UI 요소 위치 업데이트
             Canvas.SetLeft(PlayerUIElement, X);
             Canvas.SetTop(PlayerUIElement, Y);
+            Canvas.SetLeft(textBlock, X + 7);
+            Canvas.SetTop(textBlock, Y + 5);
         }
 
-        // JUMP
         public void Jump()
         {
-            // 현재 Y 위치
-            double currentY = Y;
+            if (isJumping) return; // 점프 중일 경우 아무 작업도 수행하지 않음
 
-            // 목표 Y 위치
+            isJumping = true; // 점프 시작 상태로 변경
+
+            double currentY = Y;
             double targetY = currentY - jumpHeight;
 
-            // 점프 상태 업데이트 (색상 변경)
-            PlayerUIElement.Fill = Brushes.Red; // 점프 시작 시 색상을 빨간색으로 변경
+            PlayerUIElement.Fill = Brushes.Red;
 
-            // 애니메이션 생성 및 적용
-            DoubleAnimation jumpAnimation = new DoubleAnimation
-            {
-                From = currentY,
-                To = targetY,
-                Duration = new Duration(TimeSpan.FromMilliseconds(jumpDuration)), // 400 밀리초
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
-            };
+            // 애니메이션의 시작과 끝 위치 설정
+            jumpAnimation.From = currentY;
+            jumpAnimation.To = targetY;
 
-            // 리턴 애니메이션 생성
-            DoubleAnimation returnAnimation = new DoubleAnimation
-            {
-                From = targetY,
-                To = currentY,
-                Duration = new Duration(TimeSpan.FromMilliseconds(jumpDuration)), // 400 밀리초
-                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
-            };
-
-            // 첫 번째 애니메이션 시작
             PlayerUIElement.BeginAnimation(Canvas.TopProperty, jumpAnimation);
-
-            // 첫 번째 애니메이션이 완료된 후 두 번째 애니메이션 시작
-            jumpAnimation.Completed += (s, e) =>
-            {
-                // 리턴 애니메이션 시작
-                PlayerUIElement.BeginAnimation(Canvas.TopProperty, returnAnimation);
-            };
-
-            // 두 번째 애니메이션 완료 후 색상 변경
-            returnAnimation.Completed += (s, e) =>
-            {
-                // 리턴 애니메이션이 완료된 후 플레이어의 색상을 흰색으로 변경
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    PlayerUIElement.Fill = Brushes.White; // 리턴 후 색상을 흰색으로 변경
-                });
-            };
+            Debug.WriteLine("Jump animation started!");
+            Debug.WriteLine($"isJumping: {isJumping}");
         }
     }
 }
