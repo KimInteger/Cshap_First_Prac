@@ -1,0 +1,36 @@
+# Visual Studio temporary/generated files
+*.suo
+*.user
+*.aps
+*.ncb
+*.sdf
+*.opendb
+*.pdb
+*.cache
+*.obj
+*.aps.cpp
+*.sbr
+*.bsc
+*.ilk
+*.tlb
+*.resx
+*.tlh
+*.tli
+
+# Visual Studio 2015 cache/unused files
+*.suo
+*.user
+*.sln.docstates
+
+# Build output
+bin/
+obj/
+
+# Packages
+packages/
+
+# Local IIS settings
+*.sdf
+
+# MonoDevelop specific files
+.DS_Store
