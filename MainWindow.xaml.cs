@@ -1,90 +1,16 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Diagnostics;
-using MoveSquare.Component.StaticPlayer;
-using MoveSquare.Component.BasicMap;
+﻿using System.Windows;
+using MoveSquare.Pages; // Pages 네임스페이스 추가
 
 namespace MoveSquare
 {
     public partial class MainWindow : Window
     {
-        private Player? player;
-        private Map? map;
-
         public MainWindow()
         {
             InitializeComponent();
 
-            // Start 버튼 생성
-            Button startButton = new Button
-            {
-                Content = "START",
-                Width = 100,
-                Height = 50,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            startButton.Click += StartButton_Click;
-
-            // Start 버튼을 Grid에 추가
-            AppGrid.Children.Add(startButton);
-        }
-
-        private void StartButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Grid 초기화 (Start 버튼 삭제)
-            AppGrid.Children.Clear();
-
-            // Canvas 생성
-            Canvas gameCanvas = new Canvas
-            {
-                Background = System.Windows.Media.Brushes.LightGray,
-                Width = 800,
-                Height = 450
-            };
-            AppGrid.Children.Add(gameCanvas);
-
-            // 플레이어 객체 생성 및 추가
-            player = new Player(gameCanvas); // Canvas를 매개변수로 전달
-                                             // gameCanvas.Children.Add(player.PlayerUIElement); // 이 줄은 필요 없음, Player 클래스에서 추가됨
-
-            // 맵 객체 생성 및 추가 (블록 디자인)
-            map = new Map();
-            foreach (var block in map.Blocks)
-            {
-                gameCanvas.Children.Add(block);
-            }
-
-            // 키 이벤트 핸들러 등록
-            this.KeyDown += OnKeyDown;
-        }
-
-        // 키 입력 처리
-        private void OnKeyDown(object sender, KeyEventArgs e)
-        {
-            if (player == null) return; // player가 null인 경우 메서드를 종료
-
-            if (e.Key == Key.Right)
-            {
-                player.Move(10, 0);  // 오른쪽 이동
-            }
-            else if (e.Key == Key.Left)
-            {
-                player.Move(-10, 0);  // 왼쪽 이동
-            }
-            else if (e.Key == Key.Space)
-            {
-                Debug.WriteLine("Space key pressed!"); // Space 키 확인
-                player.Jump(); // Jump 메서드 호출
-            }
+            // Frame에 StartPage로 이동
+            MainFrame.Navigate(new StartPage());
         }
     }
 }

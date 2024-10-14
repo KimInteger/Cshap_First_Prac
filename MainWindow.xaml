@@ -5,5 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="2D Platformer" Height="450" Width="800">
-	<Grid Name="AppGrid"/>
+	<Grid x:Name="AppGrid">
+		<Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
+	</Grid>
 </Window>
