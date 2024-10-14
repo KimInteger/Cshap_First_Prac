@@ -1,0 +1,16 @@
+<Page x:Class="MoveSquare.Pages.PageThree"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="PageThree">
+	<Grid>
+		<TextBlock Text="Congratulations! You cleared this game!" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+		<Button Content="Go to Clear Page"
+                Width="200"
+                Height="50"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="0,20,0,0"
+                Click="GoToClearPage_Click"/>
+	</Grid>
+</Page>
