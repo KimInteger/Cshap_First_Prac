@@ -17,6 +17,8 @@
 *.tlh
 *.tli
 
+.vs/
+
 # Visual Studio 2015 cache/unused files
 *.suo
 *.user
